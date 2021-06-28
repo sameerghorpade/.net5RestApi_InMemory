@@ -4,6 +4,7 @@ using Admin.Repository;
 using System.Linq;
 using System.Collections.Generic;
 using Admin.Dtos;
+using Admin.Entities;
 using System.Threading.Tasks;
 using Admin.Helper;
 
@@ -69,9 +70,50 @@ namespace Admin.Controllers
         {
             try
             {
-                var user = await _repository.GetUserByCredentialsAsync(loginCredentials);
+                var user = await _repository.GetUserByCredentialsAsync(loginCredentials.UserName, loginCredentials.Password);
                 if(user is null) return NotFound();
                 return  user.AsUserDto();
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<UserDto>> CreateUserAsync(CreateUserDto newUser)
+        {
+            try
+            {
+                User user = new()
+                {
+                    Id = Guid.NewGuid(),
+                    FirstName = newUser.FirstName,
+                    LastName = newUser.LastName,
+                    Age = newUser.Age,
+                    Email = newUser.Email,
+                    UserName = newUser.UserName,
+                    Password = newUser.Password,
+                    CreatedDate = DateTimeOffset.Now
+                };
+                 await _repository.CreateUserAsync(user);
+                if(user is null) return NotFound();
+                //below will call and get the result from get user
+                //suppresser added for async names in startup.cs
+                return CreatedAtAction(nameof(GetUsersAsync),new { Id = user.Id}, user.AsUserDto());
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<bool>> DeleteUserAsync(Guid Id)
+        {
+            try
+            {
+                return await _repository.DeleteUserAsync(Id);
             }
             catch (Exception ex)
             {

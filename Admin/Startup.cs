@@ -27,7 +27,10 @@ namespace Admin
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<Repository.IRepository, Repository.Repository>();
-            services.AddControllers();
+            services.AddControllers(options=>
+            {
+                options.SuppressAsyncSuffixInActionNames = false;
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Admin", Version = "v1" });

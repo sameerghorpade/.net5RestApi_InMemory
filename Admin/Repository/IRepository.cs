@@ -18,7 +18,12 @@ namespace Admin.Repository
         Task<User> GetUserByEmailAsync(string Id);
 
         //Validate User
-        Task<User> GetUserByCredentialsAsync(LoginCredentialDto loginCreds);
+        Task<User> GetUserByCredentialsAsync(string UserName, string Password);
 
+        //Create new User
+        Task CreateUserAsync(User newUser);
+
+        //Delete User
+        Task<bool> DeleteUserAsync(Guid Id);
     }
 }
