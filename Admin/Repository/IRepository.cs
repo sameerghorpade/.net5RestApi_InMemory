@@ -25,5 +25,7 @@ namespace Admin.Repository
 
         //Delete User
         Task<bool> DeleteUserAsync(Guid Id);
+
+        Task UpdateUserAsync(User user);
     }
 }

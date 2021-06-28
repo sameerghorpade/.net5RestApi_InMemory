@@ -108,12 +108,37 @@ namespace Admin.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpDelete]
         public async Task<ActionResult<bool>> DeleteUserAsync(Guid Id)
         {
             try
             {
                 return await _repository.DeleteUserAsync(Id);
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult(ex.Message);
+            }
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> UpdateUserAsync(Guid Id, UpdateUserDto userDto)
+        {
+            try
+            {
+                 var existingUser = await _repository.GetUserByIdAsync(Id);
+                 if(existingUser is null) return NoContent();
+
+                 User updatedUser = existingUser with
+                 {
+                     FirstName = userDto.FirstName,
+                     LastName = userDto.LastName,
+                     Password = userDto.Password
+                 };
+
+                 await _repository.UpdateUserAsync(updatedUser);
+                 
+                 return NoContent();
             }
             catch (Exception ex)
             {

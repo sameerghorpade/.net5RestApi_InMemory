@@ -59,6 +59,13 @@ namespace Admin.Repository
              }
              return Task.FromResult(false);
         }
+        
+        public Task UpdateUserAsync(User user)
+        {
+            var index = _db.users.FindIndex(x=>x.Id == user.Id);
+            _db.users[index] = user;
+            return Task.CompletedTask;
+        } 
 
     }
 }
